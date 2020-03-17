@@ -6,9 +6,13 @@ from __future__ import division
 from __future__ import google_type_annotations
 from __future__ import print_function
 
+from typing import Any, Dict, Optional, Text
 
-def create_percentage_difference_dictionary(eval_result, baseline_name,
-                                            metric_name):
+
+def create_percentage_difference_dictionary(
+    eval_result,
+    baseline_name: Text,
+    metric_name: Text) -> Dict[Text, Any]:
   """Creates dictionary of a % difference between a baseline and other slices.
 
   Args:
@@ -34,8 +38,21 @@ def create_percentage_difference_dictionary(eval_result, baseline_name,
   return difference
 
 
-def _get_metric_value(nested_dict, metric_name):
-  """Gets the value of the named metric from a slice's metrics."""
+def _get_metric_value(
+    nested_dict: Dict[Text, Dict[Text, Any]],
+    metric_name: Text) -> Optional[Dict[Text, float]]:
+  """Gets the value of the named metric from a slice's metrics.
+
+  Args:
+    nested_dict: Dictionary of metrics from slice.
+    metric_name: Value to return from the metric slice.
+
+  Returns:
+    Dictionary of values from the metric name requested.
+
+  Raises:
+    Value error if the metric name isn't found or if an unsupported value type.
+  """
   for key in nested_dict:
     if metric_name in nested_dict[key]['']:
       typed_value = nested_dict[key][''][metric_name]
@@ -49,7 +66,8 @@ def _get_metric_value(nested_dict, metric_name):
                        (metric_name, list(nested_dict[key][''].keys())))
 
 
-def get_baseline_value(eval_result, baseline_name, metric_name):
+def get_baseline_value(
+    eval_result, baseline_name: Text, metric_name: Text):
   """Looks through the evaluation result for the value of the baseline slice.
 
   Args:
@@ -59,6 +77,9 @@ def get_baseline_value(eval_result, baseline_name, metric_name):
 
   Returns:
     Dictionary mapping slices to percentage difference from the baseline slice.
+
+  Raises:
+    Value error if the baseline slice is not found in eval_results.
   """
   for metrics_tuple in eval_result.slicing_metrics:
     slice_tuple = metrics_tuple[0]
